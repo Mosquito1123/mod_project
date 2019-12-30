@@ -169,7 +169,7 @@ public class ModTortoise{
         </plist>
         """
     }
-    public class func modTortoise(projectDir projectDirPath:String?,framework frameworkPath:String?){
+    public class func modTortoise(projectDir projectDirPath:String?,framework frameworkPath:String?,wechatKey wechat:String = "wx9de1e7d51d81c27f",sinaKey sina:String = "",linkDeepKey linkDeep:String = "kwz020" ,tencentKey tencent:String = "tencent1106577945",qqKey qq:String = "",linkDeepGroupKey linkDeepGroup:String = "kuony1"){
         do {
             
             guard let input = projectDirPath else {
@@ -217,7 +217,7 @@ public class ModTortoise{
                 return
             }
             print(plist)
-            guard let appendData = ModTortoise.plistTemplate().data(using: String.Encoding.utf8) else {return}
+            guard let appendData = ModTortoise.plistTemplate(wechatKey: wechat, sinaKey: sina, linkDeepKey: linkDeep, tencentKey: tencent, qqKey: qq, linkDeepGroupKey: linkDeepGroup).data(using: String.Encoding.utf8) else {return}
             guard let appendInfoPlist = try PropertyListSerialization.propertyList(from: appendData, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? [String:Any] else {
                 print("无效的Plist文件")
 
@@ -236,7 +236,7 @@ public class ModTortoise{
                 print(result)
             }
             
-            guard let entitlementsData = ModTortoise.entitlementsTemplate().data(using: String.Encoding.utf8) else {return}
+            guard let entitlementsData = ModTortoise.entitlementsTemplate(linkDeepKey: linkDeep, linkDeepGroupKey: linkDeepGroup).data(using: String.Encoding.utf8) else {return}
         
 
             
@@ -304,10 +304,11 @@ public class ModTortoise{
                 
 
                 let _ = try destinationTarget?.frameworksBuildPhase()?.add(file: fileReference)
-//                let _ = try destinationTarget?.embedFrameworksBuildPhases().first?.add(file: fileReference)
+                let _ = try destinationTarget?.embedFrameworksBuildPhases().first?.add(file: fileReference)
                 if let first = destinationTarget?.embedFrameworksBuildPhases().first?.files?.first(where: { (bfile) -> Bool in
                     return bfile.file?.path == buildFile.file?.path
                 }){
+                
                     first.settings = ["ATTRIBUTES":["CodeSignOnCopy","RemoveHeadersOnCopy"]]
                 }else{
                     let _ =  destinationTarget?.embedFrameworksBuildPhases().first?.files?.append(buildFile)
